@@ -1,10 +1,12 @@
 package com.codebyisaac.cache;
+
 import java.io.IOException;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.List;
 
 public class CacheServer {
     public static final int PORT = 6379;
@@ -33,10 +35,19 @@ public class CacheServer {
             //output stream send response back
             PrintWriter writer = new PrintWriter(clientSocket.getOutputStream(), true);
         ) {
-            String clientMessage;
-            while ((clientMessage = reader.readLine()) != null) {
-                System.out.println("Recieved from client: " + clientMessage);
-                writer.println("+PONG");  //string response
+            List<String> tokens;
+            while ((tokens = ProtocolParser.parseCommand(reader)) != null) {
+                System.out.println("Command tokens: " + tokens);
+                
+                if (tokens.isEmpty()) continue;
+                String command = tokens.get(0).toUpperCase();
+
+                if (command.equals("PING")) {
+                    writer.print(ProtocolParser.toString("PONG"));
+                } else {
+                    writer.print(ProtocolParser.toError("ERR Unknown command '" + command + "'"));
+                }
+                writer.flush();
             }
             
         } catch (IOException e) {
