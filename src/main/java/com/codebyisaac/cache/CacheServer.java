@@ -12,6 +12,9 @@ public class CacheServer {
     public static final int PORT = 6379;
 
     public static void main(String[] args) {
+        CacheEngine cache = new CacheEngine();
+        CommandProcessor processor = new CommandProcessor(cache);
+
         //open serversocket bound to port 6379
         try (ServerSocket serverSocket = new ServerSocket(PORT)) {
             System.out.println("Cache Engine started on port " + PORT);
@@ -21,14 +24,14 @@ public class CacheServer {
                 Socket clientSocket = serverSocket.accept();
                 System.out.println("Clent connected from: " + clientSocket.getRemoteSocketAddress());
                 
-                handleClient(clientSocket);
+                handleClient(clientSocket, processor);
             }
         } catch (IOException e) {
             System.out.println("Could not start server on port " + PORT + ". is Redis already running?");
             e.printStackTrace();
         }
     }
-    private static void handleClient(Socket clientSocket) {
+    private static void handleClient(Socket clientSocket, CommandProcessor processor) {
         try ( 
             //input stream to read data from client
             BufferedReader reader = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
@@ -37,16 +40,8 @@ public class CacheServer {
         ) {
             List<String> tokens;
             while ((tokens = ProtocolParser.parseCommand(reader)) != null) {
-                System.out.println("Command tokens: " + tokens);
-                
-                if (tokens.isEmpty()) continue;
-                String command = tokens.get(0).toUpperCase();
-
-                if (command.equals("PING")) {
-                    writer.print(ProtocolParser.toString("PONG"));
-                } else {
-                    writer.print(ProtocolParser.toError("ERR Unknown command '" + command + "'"));
-                }
+                String response = processor.execute(tokens);
+                writer.print(response);
                 writer.flush();
             }
             
