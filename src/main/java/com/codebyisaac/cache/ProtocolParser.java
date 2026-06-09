@@ -33,11 +33,19 @@ public class ProtocolParser {
 
     //format responses: wrap standard string into a RESP simple string (+MESSAGE/r/n)
     public static String toString(String message) {
-        return "+" + message + "/r/n";
+        return "+" + message + "\r\n";
     }
 
     public static String toError(String errorMsg){
-        return "-" + errorMsg + "/r/n";
+        return "-" + errorMsg + "\r\n";
+    }
+
+    public static String toBulkString(String value) {
+        return "$" + value.length() + value + "\r\n";
+    }
+
+    public static String toNullBulkString() {
+        return "$-1\r\n";
     }
 
 }
