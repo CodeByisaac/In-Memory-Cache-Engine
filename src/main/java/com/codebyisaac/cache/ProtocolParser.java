@@ -2,6 +2,8 @@ package com.codebyisaac.cache;
 
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -41,7 +43,8 @@ public class ProtocolParser {
     }
 
     public static String toBulkString(String value) {
-        return "$" + value.length() + value + "\r\n";
+        int byteLength = value.getBytes(StandardCharsets.UTF_8).length;
+        return "$" + byteLength + "\r\n" + value + "\r\n";
     }
 
     public static String toNullBulkString() {
