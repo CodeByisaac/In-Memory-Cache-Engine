@@ -2,7 +2,6 @@ package com.codebyisaac.cache;
 
 import java.io.BufferedReader;
 import java.io.IOException;
-import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
