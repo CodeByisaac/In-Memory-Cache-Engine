@@ -1,10 +1,11 @@
 //storage for data (HashMap<key,value>)
 package com.codebyisaac.cache;
 import java.util.Map;
-import java.util.HashMap;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.Map;
 
 public class CacheEngine {
-    private final Map<String,String> memoryMap = new HashMap<>();
+    private final Map<String,String> memoryMap = new ConcurrentHashMap<>();
 
     public void set(String key, String value){
         memoryMap.put(key,value);
