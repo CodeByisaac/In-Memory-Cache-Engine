@@ -7,6 +7,8 @@ import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class CacheServer {
     public static final int PORT = 6379;
@@ -14,6 +16,8 @@ public class CacheServer {
     public static void main(String[] args) {
         CacheEngine cache = new CacheEngine();
         CommandProcessor processor = new CommandProcessor(cache);
+        
+        ExecutorService threadPool = Executors.newCachedThreadPool(); //cached thread pool to manage client connections
 
         //open serversocket bound to port 6379
         try (ServerSocket serverSocket = new ServerSocket(PORT)) {
@@ -24,14 +28,19 @@ public class CacheServer {
                 Socket clientSocket = serverSocket.accept();
                 System.out.println("Clent connected from: " + clientSocket.getRemoteSocketAddress());
                 
-                handleClient(clientSocket, processor);
+                threadPool.submit(() -> handleClient(clientSocket, processor)); //submit client handling logic as a seprate runnable task to the pool
             }
         } catch (IOException e) {
             System.out.println("Could not start server on port " + PORT + ". is Redis already running?");
             e.printStackTrace();
+        } finally {
+            threadPool.shutdown();
         }
     }
     private static void handleClient(Socket clientSocket, CommandProcessor processor) {
+        String threadName = Thread.currentThread().getName();
+        System.out.println("Connection handled by worker thread: " + threadName);
+        
         try ( 
             //input stream to read data from client
             BufferedReader reader = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
