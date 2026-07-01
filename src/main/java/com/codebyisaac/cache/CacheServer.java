@@ -26,7 +26,7 @@ public class CacheServer {
             while (true) {
                 System.out.println("Waiting for a client to connect...");
                 Socket clientSocket = serverSocket.accept();
-                System.out.println("Clent connected from: " + clientSocket.getRemoteSocketAddress());
+                System.out.println("Client connected from: " + clientSocket.getRemoteSocketAddress());
                 
                 threadPool.submit(() -> handleClient(clientSocket, processor)); //submit client handling logic as a seprate runnable task to the pool
             }
