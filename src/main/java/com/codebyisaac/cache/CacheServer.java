@@ -14,8 +14,8 @@ public class CacheServer {
     public static final int PORT = 6379;
 
     public static void main(String[] args) {
-        CacheEngine cache = new CacheEngine();
-        CommandProcessor processor = new CommandProcessor(cache);
+        CacheStorage cache = new CacheStorage();
+        CommandHandler processor = new CommandHandler(cache);
         
         ExecutorService threadPool = Executors.newCachedThreadPool(); //cached thread pool to manage client connections
 
@@ -37,7 +37,7 @@ public class CacheServer {
             threadPool.shutdown();
         }
     }
-    private static void handleClient(Socket clientSocket, CommandProcessor processor) {
+    private static void handleClient(Socket clientSocket, CommandHandler processor) {
         String threadName = Thread.currentThread().getName();
         System.out.println("Connection handled by worker thread: " + threadName);
         
