@@ -4,7 +4,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.Map;
 import java.util.Set;
 
-public class CacheEngine {
+public class CacheStorage {
     private final Map<String,CacheEntry> memoryMap = new ConcurrentHashMap<>();
 
     //standard set no expiry (-1)
