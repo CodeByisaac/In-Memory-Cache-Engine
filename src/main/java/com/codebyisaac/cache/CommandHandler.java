@@ -1,10 +1,10 @@
 package com.codebyisaac.cache;
 
 import java.util.List;
-public class CommandProcessor {
-    private final CacheEngine cache;
+public class CommandHandler {
+    private final CacheStorage cache;
 
-    public CommandProcessor(CacheEngine cache) {
+    public CommandHandler(CacheStorage cache) {
         this.cache = cache;
     }
 
