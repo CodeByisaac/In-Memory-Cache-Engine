@@ -14,9 +14,13 @@ public class CacheServer {
     public static final int PORT = 6379;
 
     public static void main(String[] args) {
-        CacheStorage cache = new CacheStorage();
-        CommandHandler processor = new CommandHandler(cache);
+        CacheStorage storage = new CacheStorage();
+        CommandHandler processor = new CommandHandler(storage);
         
+        Thread evictionThread = new Thread(new ActiveEvictionService(storage));
+        evictionThread.setDaemon(true);
+        evictionThread.start();
+
         ExecutorService threadPool = Executors.newCachedThreadPool(); //cached thread pool to manage client connections
 
         //open serversocket bound to port 6379
